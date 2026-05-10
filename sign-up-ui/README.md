@@ -1,50 +1,194 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# React Native Authentication App
 
-## Get started
+A modern React Native authentication starter project built with Expo Router, TypeScript, and glassmorphism-inspired UI design. This project includes a clean authentication flow with Sign In and Sign Up screens, reusable styling patterns, and scalable folder architecture.
 
-1. Install dependencies
+---
+![Signup](./assets/readme-assets/signup.png)
+![Signin](./assets/readme-assets/signin.png)
+---
+# Features
 
-   ```bash
-   npm install
-   ```
+* Expo Router based navigation
+* TypeScript support
+* Modern glassmorphism UI
+* Responsive mobile layout
+* Keyboard-aware forms
+* Reusable styling structure
+* Safe area support
+* Blur effects using Expo Blur
+* Tab based navigation structure
+* Clean project organization
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+# Tech Stack
 
-In the output, you'll find options to open the app in a
+## Frontend
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+* React Native
+* Expo
+* Expo Router
+* TypeScript
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## UI & Styling
 
-## Get a fresh project
+* React Native StyleSheet
+* Expo Blur
+* Safe Area Context
 
-When you're ready, run:
+---
+
+# Project Structure
 
 ```bash
-npm run reset-project
+.
+├── app
+│   ├── (tabs)
+│   │   ├── _layout.tsx
+│   │   ├── SignIn.tsx
+│   │   └── SignUp.tsx
+│   └── _layout.tsx
+│
+├── assets
+│
+├── scripts
+│
+├── .expo
+├── .vscode
+├── app.json
+├── eslint.config.js
+├── expo-env.d.ts
+├── package.json
+├── package-lock.json
+├── README.md
+└── tsconfig.json
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+# Screens
 
-To learn more about developing your project with Expo, look at the following resources:
+## Sign In
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The Sign In screen provides:
 
-## Join the community
+* Email input
+* Password input
+* Modern blurred glass card UI
+* Keyboard avoiding behavior
+* Mobile friendly layout
 
-Join our community of developers creating universal apps.
+## Sign Up
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+The Sign Up screen provides:
+
+* Username input
+* Email input
+* Password input
+* Glassmorphism styled form
+* Blur overlay effects
+* Responsive design
+
+---
+
+# Styling Architecture
+
+The project uses reusable StyleSheet patterns for scalability and maintainability.
+
+Example:
+
+```tsx
+style={[styles.inputBase, styles.inputDark]}
+```
+
+---
+
+# Installation
+
+## Clone the repository
+
+```bash
+git clone <your-repository-url>
+```
+
+## Navigate into the project
+
+```bash
+cd sign-up-ui
+```
+
+## Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+# Running the Project
+
+## Start Expo development server
+
+```bash
+npx expo start
+```
+
+## Run on Android
+
+```bash
+npx expo run:android
+```
+
+## Run on iOS
+
+```bash
+npx expo run:ios
+```
+
+---
+
+# Environment Setup
+
+Make sure the following are installed:
+
+* Node.js
+* npm
+* Expo CLI
+* Android Studio or Xcode
+
+---
+
+# Navigation
+
+The project uses Expo Router file-based routing.
+
+Example:
+
+```bash
+app/
+ ├── (tabs)/
+ │    ├── SignIn.tsx
+ │    └── SignUp.tsx
+```
+
+Routes are automatically generated from the file structure.
+
+---
+
+# UI Design Goals
+
+This project focuses on:
+
+* Clean mobile-first UI
+* Smooth authentication experience
+* Reusable components
+* Scalable architecture
+* Modern blur and glass effects
+* Maintainable codebase
+
+---
+
+# License
+
+This project is open source and available under the MIT License.
