@@ -6,7 +6,11 @@ A modern React Native authentication starter project built with Expo Router, Typ
 ---
 ![Signup](./assets/readme-assets/signup.png)
 ![Signin](./assets/readme-assets/signin.png)
+
+Check the Post where I have shown the project video 
+[Twitter Post](https://x.com/_beast0/status/2053109340463313149?s=20)
 ---
+
 # Features
 
 * Expo Router based navigation
