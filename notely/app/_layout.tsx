@@ -5,6 +5,8 @@ import * as SplashScreen from 'expo-splash-screen'
 import 'react-native-reanimated'
 import { useEffect, useState } from 'react'
 import CustomSplash from './splash'
+import Toast from 'react-native-toast-message'
+import 'react-native-get-random-values'
 import { useFonts } from 'expo-font'
 
 void SplashScreen.preventAutoHideAsync()
@@ -61,6 +63,7 @@ export default function RootLayout() {
                     headerShown: false,
                 }}
             />
+            <Toast/>
         </>
     )
 }

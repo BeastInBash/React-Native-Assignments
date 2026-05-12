@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { ImageBackground, KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS } from '@/constants/colors';
-import { Link } from 'expo-router';
-// import { Container } from './styles';
+import { Link, router } from 'expo-router';
+import { UserStorage } from '@/libs/user-storage'
 interface IUSER {
     username: string;
     password: string;
@@ -15,6 +15,21 @@ export default function SignIn() {
         username: "",
         password: ""
     })
+    const handleSubmit = async () => {
+        try {
+            if (!form.username.trim() || !form.password.trim()) {
+                return
+            }
+            await UserStorage.saveUser({
+                username: form.username,
+                password: form.password
+            })
+            router.replace('/home')
+        } catch (error) {
+            console.error(error)
+
+        }
+    }
     return (
         <ImageBackground
             source={require('../../assets/images/background.png')}
@@ -27,8 +42,8 @@ export default function SignIn() {
                         <Text style={{
                             color: COLORS.primary, marginBottom: 22, fontSize: 22,
                             fontWeight: '600',
-                            fontFamily : "JetBrains-Bold"
-                        }}>NOTE.exe</Text>
+                            fontFamily: "JetBrains-Bold"
+                        }}>NOTELY</Text>
                         <BlurView
                             intensity={60}
                             tint="dark"
@@ -75,14 +90,13 @@ export default function SignIn() {
                             </View>
                             <Pressable
                                 style={styles.submit}
-                                onPress={() => alert(`Username : ${form.username} , Email : ${form.username}`)} >
+                                onPress={handleSubmit}>
                                 <Text style={styles.submitText}>Submit</Text>
                             </Pressable>
-
                             <Link href="/sign-up" asChild style={{ borderTopWidth: 1, borderTopColor: '#23262f', marginTop: 20 }}>
                                 <Pressable>
                                     <Text style={styles.linkText}>
-                                        Already have an account? <Text style={{ color: COLORS.primary }}> Sign Up</Text>
+                                        Don&apos;t have account? <Text style={{ color: COLORS.primary }}> Sign Up</Text>
                                     </Text>
                                 </Pressable>
                             </Link>
@@ -121,7 +135,7 @@ const styles = StyleSheet.create({
     heading: {
         color: COLORS.secondary,
         fontSize: 24,
-        lineHeight : 26,
+        lineHeight: 26,
         fontFamily: "JetBrains-Regular",
         marginBottom: 8,
         textAlign: "center",

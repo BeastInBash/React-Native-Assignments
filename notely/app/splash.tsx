@@ -20,30 +20,30 @@ export default function CustomSplash() {
             </View>
 
             {/* Title */}
-            <Text style={styles.title}>Notes.exe</Text>
+            <Text style={styles.title}>Welcome To Notely.</Text>
 
             <Text style={styles.subtitle}>
-                INITIALIZATION PROTOCOL
+                Your personal diary.
             </Text>
 
             {/* Bottom */}
-            <View style={styles.bottomContainer}>
+            {/* <View style={styles.bottomContainer}> */}
+            {/**/}
+            {/*     <View style={styles.progressBar}> */}
+            {/*         <View style={styles.progress} /> */}
+            {/*     </View> */}
 
-                <View style={styles.progressBar}>
-                    <View style={styles.progress} />
-                </View>
+            {/* <View style={styles.footerRow}> */}
+            {/*     <Text style={styles.footerLeft}> */}
+            {/*         LOADING_MODULES */}
+            {/*     </Text> */}
+            {/**/}
+            {/*     <Text style={styles.footerRight}> */}
+            {/*         v.4.0-STABLE */}
+            {/*     </Text> */}
+            {/* </View> */}
 
-                <View style={styles.footerRow}>
-                    <Text style={styles.footerLeft}>
-                        LOADING_MODULES
-                    </Text>
-
-                    <Text style={styles.footerRight}>
-                        v.4.0-STABLE
-                    </Text>
-                </View>
-
-            </View>
+            {/* </View> */}
 
         </LinearGradient>
     )

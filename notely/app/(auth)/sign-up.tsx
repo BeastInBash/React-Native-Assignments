@@ -28,8 +28,9 @@ export default function SignUp() {
                     <View style={styles.container}>
                         <Text style={{
                             color: COLORS.primary, marginBottom: 22, fontSize: 32,
-                            fontWeight: '600'
-                        }}>NOTE.exe</Text>
+                            fontWeight: '600',
+                            fontFamily : "JetBrains-Bold"
+                        }}>NOTELY</Text>
                         <BlurView
                             intensity={60}
                             tint="dark"
@@ -92,10 +93,10 @@ export default function SignUp() {
                                 onPress={() => alert(`Username : ${form.username} , Email : ${form.email}`)} >
                                 <Text style={styles.submitText}>Submit</Text>
                             </Pressable>
-                            <Link href="/sign-in" asChild style={{ borderTopWidth:1, borderTopColor : '#23262f', marginTop : 20 }}>
+                            <Link href="/sign-in" asChild style={{ borderTopWidth: 1, borderTopColor: '#23262f', marginTop: 20 }}>
                                 <Pressable>
                                     <Text style={styles.linkText}>
-                                        Already have an account? <Text style={{color : COLORS.primary}}>Sign In</Text>
+                                        Already have an account? <Text style={{ color: COLORS.primary }}>Sign In</Text>
                                     </Text>
                                 </Pressable>
                             </Link>
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     heading: {
         color: COLORS.secondary,
         fontSize: 24,
-        lineHeight : 26,
+        lineHeight: 26,
         fontFamily: "JetBrains-Regular",
         marginBottom: 8,
         textAlign: "center",
