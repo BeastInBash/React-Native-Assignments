@@ -8,10 +8,17 @@ A modern note-taking mobile application built with React Native and Expo.
 
 ## Setup Locally
 
-### 1. Clone the Repository
+### 1. Clone the complete Repository
+git clone https://github.com/BeastInBash/React-Native-Assignments.git
+
+### OR Clone only notely app.
 
 ```bash
-git clone <repository-url>
+git clone --filter=blob:none --sparse https://github.com/BeastInBash/React-Native-Assignments.git
+
+cd React-Native-Assignments
+
+git sparse-checkout set notely
 ````
 
 ### 2. Move into Project Directory
