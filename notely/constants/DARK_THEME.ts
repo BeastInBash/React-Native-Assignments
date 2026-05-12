@@ -1,4 +1,5 @@
-export  const COLORS = {
+
+export  const DARK_THEME = {
     background: '#282c34',
     surface: '#21252b',
 

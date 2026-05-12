@@ -1,4 +1,4 @@
-import { COLORS } from '@/constants/colors'
+import { useTheme } from '@/libs/hooks/useTheme'
 import { NotesStorage } from '@/libs/notes-storage'
 import { Note } from '@/types/notes'
 import { Ionicons } from '@expo/vector-icons'
@@ -13,39 +13,53 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    View
+    View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {
     actions,
     RichEditor,
-    RichToolbar
+    RichToolbar,
 } from 'react-native-pell-rich-editor'
 import * as Crypto from 'expo-crypto'
 
 export default function Editor() {
-    const richText = useRef<RichEditor>(null)
+    const { theme } = useTheme()
 
-    const [title, setTitle] = useState('')
-    const [content, setContent] = useState('')
+    const styles = createStyles(theme)
+
+    const richText =
+        useRef<RichEditor>(null)
+
+    const [title, setTitle] =
+        useState('')
+
+    const [content, setContent] =
+        useState('')
 
     const handleSave = async () => {
         try {
             if (!title.trim()) {
                 Toast.show({
-                    type: "error",
-                    text1: "Validation Error",
-                    text2: "Title missing"
+                    type: 'error',
+                    text1:
+                        'Validation Error',
+                    text2:
+                        'Title missing',
                 })
+
                 return
             }
 
             if (!content.trim()) {
                 Toast.show({
-                    type: "error",
-                    text1: 'Validation Error',
-                    text2: 'Please write some content'
+                    type: 'error',
+                    text1:
+                        'Validation Error',
+                    text2:
+                        'Please write some content',
                 })
+
                 return
             }
 
@@ -53,17 +67,21 @@ export default function Editor() {
                 id: Crypto.randomUUID(),
                 title,
                 content,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                createdAt:
+                    new Date().toISOString(),
+                updatedAt:
+                    new Date().toISOString(),
             }
 
-            await NotesStorage.addNote(note)
+            await NotesStorage.addNote(
+                note
+            )
 
             Toast.show({
-                type: "success",
+                type: 'success',
                 text1: 'Success',
-                text2: 'Note saved successfully'
-
+                text2:
+                    'Note saved successfully',
             })
 
             router.back()
@@ -71,15 +89,18 @@ export default function Editor() {
             console.error(error)
 
             Toast.show({
-                type: "error",
+                type: 'error',
                 text1: 'Error',
-                text2: 'Failed to save note'
+                text2:
+                    'Failed to save note',
             })
         }
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView
+            style={styles.container}
+        >
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={
@@ -88,27 +109,37 @@ export default function Editor() {
                         : undefined
                 }
             >
-                {/* HEADER */}
-
                 <View style={styles.header}>
                     <Pressable
-                        style={styles.iconButton}
-                        onPress={() => router.back()}
+                        style={
+                            styles.iconButton
+                        }
+                        onPress={() =>
+                            router.back()
+                        }
                     >
                         <Ionicons
                             name="arrow-back"
                             size={22}
-                            color={COLORS.textBright}
+                            color={
+                                theme.textBright
+                            }
                         />
                     </Pressable>
 
-                    <Text style={styles.heading}>
+                    <Text
+                        style={styles.heading}
+                    >
                         New Note
                     </Text>
 
                     <Pressable
-                        style={styles.saveButton}
-                        onPress={handleSave}
+                        style={
+                            styles.saveButton
+                        }
+                        onPress={
+                            handleSave
+                        }
                     >
                         <Ionicons
                             name="checkmark"
@@ -118,68 +149,76 @@ export default function Editor() {
                     </Pressable>
                 </View>
 
-                {/* CONTENT */}
-
                 <ScrollView
                     style={styles.content}
                     keyboardShouldPersistTaps="handled"
-                    showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={
+                        false
+                    }
                 >
-                    {/* TITLE */}
-
                     <TextInput
-                        style={styles.titleInput}
+                        style={
+                            styles.titleInput
+                        }
                         placeholder="Note title..."
                         placeholderTextColor={
-                            COLORS.text
+                            theme.text
                         }
                         value={title}
-                        onChangeText={setTitle}
+                        onChangeText={
+                            setTitle
+                        }
                     />
 
-                    {/* RICH EDITOR */}
-
-                    <View style={styles.editorContainer}>
+                    <View
+                        style={
+                            styles.editorContainer
+                        }
+                    >
                         <RichEditor
                             ref={richText}
                             placeholder="Start writing your thoughts..."
-                            onChange={setContent}
-                            style={styles.editor}
-                            initialHeight={400}
+                            onChange={
+                                setContent
+                            }
+                            style={
+                                styles.editor
+                            }
+                            initialHeight={
+                                400
+                            }
                             editorStyle={{
                                 backgroundColor:
-                                    COLORS.surface,
+                                    theme.surface,
 
                                 color:
-                                    COLORS.textBright,
+                                    theme.textBright,
 
                                 caretColor:
-                                    COLORS.primary,
+                                    theme.primary,
 
                                 placeholderColor:
-                                    COLORS.text,
+                                    theme.text,
 
                                 contentCSSText: `
                                     font-size: 16px;
-                                    color: ${COLORS.textBright};
+                                    color: ${theme.textBright};
                                     padding: 16px;
                                     line-height: 26px;
-                                    background-color: ${COLORS.surface};
-                                    font-family : JetBrains-Regular
-                                `
+                                    background-color: ${theme.surface};
+                                    font-family: JetBrains-Regular;
+                                `,
                             }}
                         />
                     </View>
                 </ScrollView>
 
-                {/* TOOLBAR */}
-
                 <RichToolbar
                     editor={richText}
                     selectedIconTint={
-                        COLORS.primary
+                        theme.primary
                     }
-                    iconTint={COLORS.text}
+                    iconTint={theme.text}
                     actions={[
                         actions.undo,
                         actions.redo,
@@ -199,80 +238,106 @@ export default function Editor() {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: COLORS.background,
-    },
+const createStyles = (theme: any) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor:
+                theme.background,
+        },
 
-    header: {
-        paddingHorizontal: 18,
-        paddingVertical: 14,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
-    },
+        header: {
+            paddingHorizontal: 18,
+            paddingVertical: 14,
 
-    heading: {
-        color: COLORS.textBright,
-        fontSize: 20,
-        fontFamily: 'JetBrains-Bold',
-    },
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent:
+                'space-between',
 
-    iconButton: {
-        width: 42,
-        height: 42,
-        borderRadius: 14,
-        backgroundColor: COLORS.surface,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-    },
+            borderBottomWidth: 1,
+            borderBottomColor:
+                theme.border,
+        },
 
-    saveButton: {
-        width: 42,
-        height: 42,
-        borderRadius: 14,
-        backgroundColor: COLORS.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+        heading: {
+            color: theme.textBright,
+            fontSize: 20,
+            fontFamily:
+                'JetBrains-Bold',
+        },
 
-    content: {
-        flex: 1,
-        paddingHorizontal: 18,
-        paddingTop: 20,
-    },
+        iconButton: {
+            width: 42,
+            height: 42,
 
-    titleInput: {
-        color: COLORS.textBright,
-        fontSize: 24,
-        fontFamily: 'JetBrains-Bold',
-        marginBottom: 10,
-        marginTop : 20
-    },
+            borderRadius: 14,
 
-    editorContainer: {
-        minHeight: 500,
-        borderRadius: 24,
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        backgroundColor: COLORS.surface,
-    },
+            backgroundColor:
+                theme.surface,
 
-    editor: {
-        backgroundColor: COLORS.surface,
-        fontFamily : "JetBrains-Regular"
-    },
+            alignItems: 'center',
+            justifyContent: 'center',
 
-    toolbar: {
-        backgroundColor: COLORS.surface,
-        borderTopWidth: 1,
-        borderTopColor: COLORS.border,
-        paddingVertical: 10,
-    },
-})
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+
+        saveButton: {
+            width: 42,
+            height: 42,
+
+            borderRadius: 14,
+
+            backgroundColor:
+                theme.primary,
+
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+
+        content: {
+            flex: 1,
+            paddingHorizontal: 18,
+            paddingTop: 20,
+        },
+
+        titleInput: {
+            color: theme.textBright,
+            fontSize: 24,
+            fontFamily:
+                'JetBrains-Bold',
+
+            marginBottom: 10,
+            marginTop: 20,
+        },
+
+        editorContainer: {
+            minHeight: 500,
+
+            borderRadius: 24,
+            overflow: 'hidden',
+
+            borderWidth: 1,
+            borderColor: theme.border,
+
+            backgroundColor:
+                theme.surface,
+        },
+
+        editor: {
+            backgroundColor:
+                theme.surface,
+        },
+
+        toolbar: {
+            backgroundColor:
+                theme.surface,
+
+            borderTopWidth: 1,
+            borderTopColor:
+                theme.border,
+
+            paddingVertical: 10,
+        },
+    })

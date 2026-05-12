@@ -8,6 +8,7 @@ import CustomSplash from './splash'
 import Toast from 'react-native-toast-message'
 import 'react-native-get-random-values'
 import { useFonts } from 'expo-font'
+import { ThemeProvider } from './context/theme-context'
 
 void SplashScreen.preventAutoHideAsync()
 
@@ -49,7 +50,7 @@ export default function RootLayout() {
     }
 
     return (
-        <>
+        <ThemeProvider>
             <StatusBar
                 style={
                     colorScheme === 'dark'
@@ -63,7 +64,7 @@ export default function RootLayout() {
                     headerShown: false,
                 }}
             />
-            <Toast/>
-        </>
+            <Toast />
+        </ThemeProvider>
     )
 }

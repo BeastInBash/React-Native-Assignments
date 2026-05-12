@@ -1,9 +1,13 @@
-import { COLORS } from '@/constants/colors'
+import { useTheme } from '@/libs/hooks/useTheme'
 import { NotesStorage } from '@/libs/notes-storage'
 import { UserStorage } from '@/libs/user-storage'
 import { Ionicons } from '@expo/vector-icons'
 import { router, useFocusEffect } from 'expo-router'
-import { useState, useEffect, useCallback } from 'react'
+import {
+    useState,
+    useEffect,
+    useCallback,
+} from 'react'
 import Modal from 'react-native-modal'
 import {
     View,
@@ -13,22 +17,36 @@ import {
     Image,
     TextInput,
     FlatList,
-    Pressable
+    Pressable,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-
 export default function Home() {
-    const [search, setSearch] = useState<string>('')
-    const [deleteModal, setDeleteModal] = useState(false)
+    const { theme, mode, toggleTheme } =
+        useTheme()
 
-    const [profileModal, setProfileModal] = useState(false)
+    const styles = createStyles(theme)
 
-    const [selectedNote, setSelectedNote] = useState<any>(null)
-    const [notes, setNotes] = useState<any[]>([])
+    const [search, setSearch] =
+        useState('')
+
+    const [deleteModal, setDeleteModal] =
+        useState(false)
+
+    const [profileModal, setProfileModal] =
+        useState(false)
+
+    const [selectedNote, setSelectedNote] =
+        useState<any>(null)
+
+    const [notes, setNotes] = useState<
+        any[]
+    >([])
+
     const [user, setUser] = useState({
-        username: ""
+        username: '',
     })
+
     useEffect(() => {
         loadUser()
     }, [])
@@ -36,9 +54,11 @@ export default function Home() {
     const loadUser = async () => {
         const currentUser =
             await UserStorage.getUser()
+
         //@ts-ignore
         setUser(currentUser)
     }
+
     useFocusEffect(
         useCallback(() => {
             loadNotes()
@@ -47,25 +67,39 @@ export default function Home() {
 
     const loadNotes = async () => {
         try {
-            const data = await NotesStorage.getNotes()
+            const data =
+                await NotesStorage.getNotes()
+
             setNotes(data)
         } catch (error) {
             console.error(error)
         }
     }
-    const filteredNotes = notes.filter((note) => {
-        const query = search.toLowerCase()
 
-        return (
-            note.title
-                ?.toLowerCase()
-                .includes(query) ||
+    const filteredNotes = notes.filter(
+        (note) => {
+            const query =
+                search.toLowerCase()
 
-            note.content
-                ?.toLowerCase()
-                .includes(query)
-        )
-    })
+            const plainContent =
+                note.content
+                    ?.replace(
+                        /<[^>]*>/g,
+                        ''
+                    )
+                    .toLowerCase()
+
+            return (
+                note.title
+                    ?.toLowerCase()
+                    .includes(query) ||
+                plainContent.includes(
+                    query
+                )
+            )
+        }
+    )
+
     const handleDelete = async () => {
         try {
             if (!selectedNote) return
@@ -77,7 +111,8 @@ export default function Home() {
             setNotes((prev) =>
                 prev.filter(
                     (note) =>
-                        note.id !== selectedNote.id
+                        note.id !==
+                        selectedNote.id
                 )
             )
 
@@ -86,6 +121,7 @@ export default function Home() {
             console.error(error)
         }
     }
+
     const handleLogout = async () => {
         await UserStorage.removeUser()
 
@@ -93,18 +129,26 @@ export default function Home() {
 
         router.replace('/sign-in')
     }
+
     const renderItem = ({ item }: any) => (
-        <Pressable style={styles.noteCard}
+        <Pressable
+            style={styles.noteCard}
             onPress={() =>
-                router.push(`/notes/${item.id}`)
+                router.push(
+                    `/notes/${item.id}`
+                )
             }
         >
             <View style={styles.noteHeader}>
-                <View style={styles.noteIconContainer}>
+                <View
+                    style={
+                        styles.noteIconContainer
+                    }
+                >
                     <Ionicons
                         name="document-text-outline"
                         size={20}
-                        color={COLORS.primary}
+                        color={theme.primary}
                     />
                 </View>
 
@@ -113,12 +157,14 @@ export default function Home() {
                         setSelectedNote(item)
                         setDeleteModal(true)
                     }}
-                    style={styles.noteIconContainer}
+                    style={
+                        styles.noteIconContainer
+                    }
                 >
                     <Ionicons
                         name="ellipsis-horizontal"
-                        size={24}
-                        color={COLORS.error}
+                        size={22}
+                        color={theme.error}
                     />
                 </Pressable>
             </View>
@@ -128,21 +174,29 @@ export default function Home() {
             </Text>
 
             <Text
-                style={styles.noteDescription}
+                style={
+                    styles.noteDescription
+                }
                 numberOfLines={2}
             >
-                This is a sample note preview for your
-                note taking application.
+                {item.content
+                    ?.replace(
+                        /<[^>]*>/g,
+                        ''
+                    )
+                    .slice(0, 120)}
             </Text>
 
             <View style={styles.noteFooter}>
                 <Text style={styles.noteDate}>
-                    Today
+                    {new Date(
+                        item.createdAt
+                    ).toLocaleDateString()}
                 </Text>
 
                 <View style={styles.tag}>
                     <Text style={styles.tagText}>
-                        Personal
+                        Note
                     </Text>
                 </View>
             </View>
@@ -151,112 +205,253 @@ export default function Home() {
 
     return (
         <ImageBackground
-            source={require('../../assets/images/background.png')}
+            source={
+                mode === 'dark'
+                    ? require('../../assets/images/background.png')
+                    : undefined
+            }
             style={styles.background}
             resizeMode="cover"
         >
-            <SafeAreaView style={styles.safeArea}>
-
+            <SafeAreaView
+                style={styles.safeArea}
+            >
                 <View style={styles.header}>
-                    <View style={styles.headerLeft}>
-                        <Pressable style={styles.menuButton}>
+                    <View
+                        style={styles.headerLeft}
+                    >
+                        <Pressable
+                            style={
+                                styles.menuButton
+                            }
+                        >
                             <Ionicons
                                 size={24}
-                                color={COLORS.textBright}
+                                color={
+                                    theme.textBright
+                                }
                                 name="menu"
                             />
                         </Pressable>
 
-                        <View >
-                            <Text style={styles.heading}>
-                                Welcome<Text style={{ color: COLORS.secondary }}> {user?.username}</Text>
+                        <View>
+                            <Text
+                                style={
+                                    styles.heading
+                                }
+                            >
+                                Welcome
+                                <Text
+                                    style={{
+                                        color: theme.secondary,
+                                    }}
+                                >
+                                    {' '}
+                                    {
+                                        user?.username
+                                    }
+                                </Text>
                             </Text>
                         </View>
                     </View>
 
-                    <Pressable
-                        style={styles.avatarWrapper}
-                        onPress={() =>
-                            setProfileModal(true)
-                        }
+                    <View
+                        style={{
+                            flexDirection:
+                                'row',
+                            alignItems:
+                                'center',
+                            gap: 12,
+                        }}
                     >
-                        <Image
-                            source={require('../../assets/images/pfp.png')}
-                            style={styles.avatar}
-                        />
-                    </Pressable>
+                        <Pressable
+                            style={
+                                styles.themeButton
+                            }
+                            onPress={
+                                toggleTheme
+                            }
+                        >
+                            <Ionicons
+                                name={
+                                    mode ===
+                                    'dark'
+                                        ? 'sunny'
+                                        : 'moon'
+                                }
+                                size={22}
+                                color={
+                                    theme.textBright
+                                }
+                            />
+                        </Pressable>
+
+                        <Pressable
+                            style={
+                                styles.avatarWrapper
+                            }
+                            onPress={() =>
+                                setProfileModal(
+                                    true
+                                )
+                            }
+                        >
+                            <Image
+                                source={require('../../assets/images/pfp.png')}
+                                style={
+                                    styles.avatar
+                                }
+                            />
+                        </Pressable>
+                    </View>
                 </View>
 
-
-                <View style={styles.searchContainer}>
+                <View
+                    style={
+                        styles.searchContainer
+                    }
+                >
                     <Ionicons
                         name="search"
                         size={20}
-                        color={COLORS.text}
+                        color={theme.text}
                     />
 
                     <TextInput
-                        style={styles.searchInput}
+                        style={
+                            styles.searchInput
+                        }
                         placeholder="Search notes..."
-                        placeholderTextColor={COLORS.text}
-                        onChangeText={setSearch}
+                        placeholderTextColor={
+                            theme.text
+                        }
+                        onChangeText={
+                            setSearch
+                        }
                         value={search}
                     />
                 </View>
 
-
                 <FlatList
                     data={filteredNotes}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={styles.listContent}
-                    showsVerticalScrollIndicator={false}
+                    keyExtractor={(item) =>
+                        item.id
+                    }
+                    contentContainerStyle={
+                        styles.listContent
+                    }
+                    showsVerticalScrollIndicator={
+                        false
+                    }
+                    ListEmptyComponent={
+                        <View
+                            style={{
+                                marginTop: 80,
+                                alignItems:
+                                    'center',
+                            }}
+                        >
+                            <Ionicons
+                                name="document-text-outline"
+                                size={72}
+                                color={
+                                    theme.border
+                                }
+                            />
+
+                            <Text
+                                style={{
+                                    color: theme.text,
+                                    marginTop: 16,
+                                    fontSize: 16,
+                                }}
+                            >
+                                No notes found
+                            </Text>
+                        </View>
+                    }
                 />
 
-
-                <Pressable style={styles.fab} onPress={() => router.push('/editor')}>
+                <Pressable
+                    style={styles.fab}
+                    onPress={() =>
+                        router.push(
+                            '/editor'
+                        )
+                    }
+                >
                     <Ionicons
                         name="add"
                         size={30}
                         color="#fff"
                     />
                 </Pressable>
+
                 <Modal
                     isVisible={deleteModal}
                     onBackdropPress={() =>
                         setDeleteModal(false)
                     }
                 >
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>
+                    <View
+                        style={
+                            styles.modalContainer
+                        }
+                    >
+                        <Text
+                            style={
+                                styles.modalTitle
+                            }
+                        >
                             Delete Note
                         </Text>
 
-                        <Text style={styles.modalText}>
-                            Are you sure you want to
-                            delete this note?
+                        <Text
+                            style={
+                                styles.modalText
+                            }
+                        >
+                            Are you sure you want
+                            to delete this note?
                         </Text>
 
-                        <View style={styles.modalActions}>
+                        <View
+                            style={
+                                styles.modalActions
+                            }
+                        >
                             <Pressable
-                                style={styles.cancelButton}
+                                style={
+                                    styles.cancelButton
+                                }
                                 onPress={() =>
-                                    setDeleteModal(false)
+                                    setDeleteModal(
+                                        false
+                                    )
                                 }
                             >
                                 <Text
-                                    style={styles.cancelText}
+                                    style={
+                                        styles.cancelText
+                                    }
                                 >
                                     Cancel
                                 </Text>
                             </Pressable>
 
                             <Pressable
-                                style={styles.deleteButton}
-                                onPress={handleDelete}
+                                style={
+                                    styles.deleteButton
+                                }
+                                onPress={
+                                    handleDelete
+                                }
                             >
                                 <Text
-                                    style={styles.deleteText}
+                                    style={
+                                        styles.deleteText
+                                    }
                                 >
                                     Delete
                                 </Text>
@@ -264,25 +459,40 @@ export default function Home() {
                         </View>
                     </View>
                 </Modal>
+
                 <Modal
                     isVisible={profileModal}
                     onBackdropPress={() =>
                         setProfileModal(false)
                     }
                 >
-                    <View style={styles.profileModal}>
+                    <View
+                        style={
+                            styles.profileModal
+                        }
+                    >
                         <Image
                             source={require('../../assets/images/pfp.png')}
-                            style={styles.profileImage}
+                            style={
+                                styles.profileImage
+                            }
                         />
 
-                        <Text style={styles.profileName}>
+                        <Text
+                            style={
+                                styles.profileName
+                            }
+                        >
                             {user?.username}
                         </Text>
 
                         <Pressable
-                            style={styles.logoutButton}
-                            onPress={handleLogout}
+                            style={
+                                styles.logoutButton
+                            }
+                            onPress={
+                                handleLogout
+                            }
                         >
                             <Ionicons
                                 name="log-out-outline"
@@ -291,7 +501,9 @@ export default function Home() {
                             />
 
                             <Text
-                                style={styles.logoutText}
+                                style={
+                                    styles.logoutText
+                                }
                             >
                                 Logout
                             </Text>
@@ -303,275 +515,319 @@ export default function Home() {
     )
 }
 
-const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        paddingHorizontal: 18,
-    },
-
-    background: {
-        flex: 1,
-        backgroundColor: COLORS.background,
-    },
-
-    header: {
-        marginTop: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-
-    headerLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 14,
-    },
-
-    menuButton: {
-        width: 46,
-        height: 46,
-        borderRadius: 16,
-        backgroundColor: COLORS.surface,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-    },
-
-    heading: {
-        color: COLORS.textBright,
-        fontSize: 18,
-        fontFamily: 'JetBrains-Bold',
-    },
-
-    subHeading: {
-        color: COLORS.text,
-        fontSize: 13,
-        marginTop: 2,
-        fontFamily: 'JetBrains-Regular',
-    },
-
-    avatarWrapper: {
-        width: 50,
-        height: 50,
-        borderRadius: 18,
-        overflow: 'hidden',
-        borderWidth: 2,
-        borderColor: COLORS.primary,
-    },
-
-    avatar: {
-        width: '100%',
-        height: '100%',
-    },
-
-    searchContainer: {
-        marginTop: 28,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: COLORS.surface,
-        borderRadius: 18,
-        paddingHorizontal: 16,
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        height: 56,
-        gap: 10,
-    },
-
-    searchInput: {
-        flex: 1,
-        color: COLORS.textBright,
-        fontSize: 15,
-        fontFamily: 'JetBrains-Regular',
-    },
-
-    listContent: {
-        paddingTop: 22,
-        paddingBottom: 120,
-        gap: 16,
-    },
-
-    noteCard: {
-        backgroundColor: COLORS.surface,
-        borderRadius: 10,
-        padding: 18,
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 6,
+const createStyles = (theme: any) =>
+    StyleSheet.create({
+        safeArea: {
+            flex: 1,
+            paddingHorizontal: 18,
         },
-        shadowOpacity: 0.18,
-        shadowRadius: 12,
-        elevation: 6,
-    },
 
-    noteHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-
-    noteIconContainer: {
-        width: 38,
-        height: 38,
-        borderRadius: 12,
-        backgroundColor: 'rgba(97,175,239,0.12)',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    noteTitle: {
-        color: COLORS.textBright,
-        fontSize: 18,
-        marginTop: 16,
-        fontFamily: 'JetBrains-Bold',
-    },
-
-    noteDescription: {
-        color: COLORS.text,
-        marginTop: 8,
-        lineHeight: 22,
-        fontSize: 14,
-        fontFamily: 'JetBrains-Regular',
-    },
-
-    noteFooter: {
-        marginTop: 18,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-
-    noteDate: {
-        color: COLORS.text,
-        fontSize: 12,
-        fontFamily: 'JetBrains-Regular',
-    },
-
-    tag: {
-        backgroundColor: 'rgba(198,120,221,0.16)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 100,
-    },
-
-    tagText: {
-        color: COLORS.secondary,
-        fontSize: 12,
-        fontFamily: 'JetBrains-Medium',
-    },
-
-    fab: {
-        position: 'absolute',
-        bottom: 30,
-        right: 24,
-        width: 64,
-        height: 64,
-        borderRadius: 22,
-        backgroundColor: COLORS.primary,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: COLORS.primary,
-        shadowOffset: {
-            width: 0,
-            height: 8,
+        background: {
+            flex: 1,
+            backgroundColor:
+                theme.background,
         },
-        shadowOpacity: 0.35,
-        shadowRadius: 14,
-        elevation: 10,
-    },
-    modalContainer: {
-        backgroundColor: COLORS.surface,
-        borderRadius: 24,
-        padding: 24,
-        borderWidth: 1,
-        borderColor: COLORS.border,
-    },
 
-    modalTitle: {
-        color: COLORS.textBright,
-        fontSize: 22,
-        fontFamily: 'JetBrains-Bold',
-    },
+        header: {
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent:
+                'space-between',
+        },
 
-    modalText: {
-        color: COLORS.text,
-        marginTop: 12,
-        lineHeight: 24,
-        fontSize: 14,
-    },
+        headerLeft: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 14,
+        },
 
-    modalActions: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        gap: 12,
-        marginTop: 28,
-    },
+        menuButton: {
+            width: 46,
+            height: 46,
+            borderRadius: 16,
+            backgroundColor:
+                theme.surface,
 
-    cancelButton: {
-        paddingHorizontal: 18,
-        paddingVertical: 12,
-        borderRadius: 14,
-        backgroundColor: COLORS.background,
-    },
+            justifyContent: 'center',
+            alignItems: 'center',
 
-    deleteButton: {
-        paddingHorizontal: 18,
-        paddingVertical: 12,
-        borderRadius: 14,
-        backgroundColor: COLORS.error,
-    },
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
 
-    cancelText: {
-        color: COLORS.textBright,
-        fontFamily: 'JetBrains-Medium',
-    },
+        heading: {
+            color: theme.textBright,
+            fontSize: 18,
+            fontFamily:
+                'JetBrains-Bold',
+        },
 
-    deleteText: {
-        color: '#fff',
-        fontFamily: 'JetBrains-Medium',
-    },
+        avatarWrapper: {
+            width: 50,
+            height: 50,
+            borderRadius: 18,
+            overflow: 'hidden',
+            borderWidth: 2,
+            borderColor:
+                theme.primary,
+        },
 
-    profileModal: {
-        backgroundColor: COLORS.surface,
-        borderRadius: 24,
-        padding: 28,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-    },
+        avatar: {
+            width: '100%',
+            height: '100%',
+        },
 
-    profileImage: {
-        width: 90,
-        height: 90,
-        borderRadius: 100,
-        borderWidth: 3,
-        borderColor: COLORS.primary,
-    },
+        themeButton: {
+            width: 46,
+            height: 46,
+            borderRadius: 16,
+            backgroundColor:
+                theme.surface,
 
-    profileName: {
-        color: COLORS.textBright,
-        fontSize: 20,
-        marginTop: 18,
-        fontFamily: 'JetBrains-Bold',
-    },
+            justifyContent: 'center',
+            alignItems: 'center',
 
-    logoutButton: {
-        marginTop: 28,
-        backgroundColor: COLORS.error,
-        paddingHorizontal: 22,
-        paddingVertical: 14,
-        borderRadius: 16,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-    },
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
 
-    logoutText: {
-        color: '#fff',
-        fontSize: 15,
-        fontFamily: 'JetBrains-Bold',
-    },
-})
+        searchContainer: {
+            marginTop: 28,
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor:
+                theme.surface,
+
+            borderRadius: 18,
+            paddingHorizontal: 16,
+
+            borderWidth: 1,
+            borderColor: theme.border,
+
+            height: 56,
+            gap: 10,
+        },
+
+        searchInput: {
+            flex: 1,
+            color: theme.textBright,
+            fontSize: 15,
+            fontFamily:
+                'JetBrains-Regular',
+        },
+
+        listContent: {
+            paddingTop: 22,
+            paddingBottom: 120,
+            gap: 16,
+        },
+
+        noteCard: {
+            backgroundColor:
+                theme.surface,
+
+            borderRadius: 10,
+            padding: 18,
+
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+
+        noteHeader: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent:
+                'space-between',
+        },
+
+        noteIconContainer: {
+            width: 38,
+            height: 38,
+            borderRadius: 12,
+
+            backgroundColor:
+                'rgba(97,175,239,0.12)',
+
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+
+        noteTitle: {
+            color: theme.textBright,
+            fontSize: 18,
+            marginTop: 16,
+            fontFamily:
+                'JetBrains-Bold',
+        },
+
+        noteDescription: {
+            color: theme.text,
+            marginTop: 8,
+            lineHeight: 22,
+            fontSize: 14,
+            fontFamily:
+                'JetBrains-Regular',
+        },
+
+        noteFooter: {
+            marginTop: 18,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent:
+                'space-between',
+        },
+
+        noteDate: {
+            color: theme.text,
+            fontSize: 12,
+            fontFamily:
+                'JetBrains-Regular',
+        },
+
+        tag: {
+            backgroundColor:
+                'rgba(198,120,221,0.16)',
+
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 100,
+        },
+
+        tagText: {
+            color: theme.secondary,
+            fontSize: 12,
+            fontFamily:
+                'JetBrains-Medium',
+        },
+
+        fab: {
+            position: 'absolute',
+            bottom: 30,
+            right: 24,
+
+            width: 64,
+            height: 64,
+
+            borderRadius: 22,
+
+            backgroundColor:
+                theme.primary,
+
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+
+        modalContainer: {
+            backgroundColor:
+                theme.surface,
+
+            borderRadius: 24,
+            padding: 24,
+
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+
+        modalTitle: {
+            color: theme.textBright,
+            fontSize: 22,
+            fontFamily:
+                'JetBrains-Bold',
+        },
+
+        modalText: {
+            color: theme.text,
+            marginTop: 12,
+            lineHeight: 24,
+            fontSize: 14,
+        },
+
+        modalActions: {
+            flexDirection: 'row',
+            justifyContent:
+                'flex-end',
+
+            gap: 12,
+            marginTop: 28,
+        },
+
+        cancelButton: {
+            paddingHorizontal: 18,
+            paddingVertical: 12,
+            borderRadius: 14,
+            backgroundColor:
+                theme.background,
+        },
+
+        deleteButton: {
+            paddingHorizontal: 18,
+            paddingVertical: 12,
+            borderRadius: 14,
+            backgroundColor:
+                theme.error,
+        },
+
+        cancelText: {
+            color: theme.textBright,
+            fontFamily:
+                'JetBrains-Medium',
+        },
+
+        deleteText: {
+            color: '#fff',
+            fontFamily:
+                'JetBrains-Medium',
+        },
+
+        profileModal: {
+            backgroundColor:
+                theme.surface,
+
+            borderRadius: 24,
+            padding: 28,
+            alignItems: 'center',
+
+            borderWidth: 1,
+            borderColor: theme.border,
+        },
+
+        profileImage: {
+            width: 90,
+            height: 90,
+            borderRadius: 100,
+            borderWidth: 3,
+            borderColor:
+                theme.primary,
+        },
+
+        profileName: {
+            color: theme.textBright,
+            fontSize: 20,
+            marginTop: 18,
+            fontFamily:
+                'JetBrains-Bold',
+        },
+
+        logoutButton: {
+            marginTop: 28,
+            backgroundColor:
+                theme.error,
+
+            paddingHorizontal: 22,
+            paddingVertical: 14,
+
+            borderRadius: 16,
+
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+        },
+
+        logoutText: {
+            color: '#fff',
+            fontSize: 15,
+            fontFamily:
+                'JetBrains-Bold',
+        },
+    })

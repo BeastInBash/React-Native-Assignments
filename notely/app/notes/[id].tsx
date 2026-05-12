@@ -1,9 +1,16 @@
-import { COLORS } from '@/constants/colors'
+import { useTheme } from '@/libs/hooks/useTheme'
 import { NotesStorage } from '@/libs/notes-storage'
 import { Note } from '@/types/notes'
 import { Ionicons } from '@expo/vector-icons'
-import { router, useLocalSearchParams } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
+import {
+    router,
+    useLocalSearchParams,
+} from 'expo-router'
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from 'react'
 import {
     ActivityIndicator,
     Pressable,
@@ -11,13 +18,18 @@ import {
     StyleSheet,
     Text,
     View,
-    useWindowDimensions
+    useWindowDimensions,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import RenderHtml from 'react-native-render-html'
 
 export default function NoteDetails() {
-    const { id } = useLocalSearchParams()
+    const { theme } = useTheme()
+
+    const styles = createStyles(theme)
+
+    const { id } =
+        useLocalSearchParams()
 
     const [note, setNote] =
         useState<Note | null>(null)
@@ -28,24 +40,29 @@ export default function NoteDetails() {
     const { width } =
         useWindowDimensions()
 
-    const loadNote = useCallback(async () => {
-        try {
-            const notes =
-                await NotesStorage.getNotes()
+    const loadNote = useCallback(
+        async () => {
+            try {
+                const notes =
+                    await NotesStorage.getNotes()
 
-            const foundNote = notes.find(
-                (note) => note.id === id
-            )
+                const foundNote =
+                    notes.find(
+                        (note) =>
+                            note.id === id
+                    )
 
-            if (foundNote) {
-                setNote(foundNote)
+                if (foundNote) {
+                    setNote(foundNote)
+                }
+            } catch (error) {
+                console.error(error)
+            } finally {
+                setLoading(false)
             }
-        } catch (error) {
-            console.error(error)
-        } finally {
-            setLoading(false)
-        }
-    }, [id])
+        },
+        [id]
+    )
 
     useEffect(() => {
         loadNote()
@@ -54,11 +71,13 @@ export default function NoteDetails() {
     if (loading) {
         return (
             <SafeAreaView
-                style={styles.loaderContainer}
+                style={
+                    styles.loaderContainer
+                }
             >
                 <ActivityIndicator
                     size="large"
-                    color={COLORS.primary}
+                    color={theme.primary}
                 />
             </SafeAreaView>
         )
@@ -67,9 +86,15 @@ export default function NoteDetails() {
     if (!note) {
         return (
             <SafeAreaView
-                style={styles.loaderContainer}
+                style={
+                    styles.loaderContainer
+                }
             >
-                <Text style={styles.emptyText}>
+                <Text
+                    style={
+                        styles.emptyText
+                    }
+                >
                     Note not found
                 </Text>
             </SafeAreaView>
@@ -77,35 +102,41 @@ export default function NoteDetails() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-
+        <SafeAreaView
+            style={styles.container}
+        >
             <View style={styles.header}>
                 <Pressable
-                    style={styles.iconButton}
-                    onPress={() => router.back()}
+                    style={
+                        styles.iconButton
+                    }
+                    onPress={() =>
+                        router.back()
+                    }
                 >
                     <Ionicons
                         name="arrow-back"
                         size={22}
                         color={
-                            COLORS.textBright
+                            theme.textBright
                         }
                     />
                 </Pressable>
 
                 <Pressable
-                    style={styles.iconButton}
+                    style={
+                        styles.iconButton
+                    }
                 >
                     <Ionicons
                         name="create-outline"
                         size={22}
                         color={
-                            COLORS.textBright
+                            theme.textBright
                         }
                     />
                 </Pressable>
             </View>
-
 
             <ScrollView
                 style={styles.content}
@@ -123,9 +154,15 @@ export default function NoteDetails() {
                     ).toLocaleDateString()}
                 </Text>
 
-                <View style={styles.htmlContainer}>
+                <View
+                    style={
+                        styles.htmlContainer
+                    }
+                >
                     <RenderHtml
-                        contentWidth={width}
+                        contentWidth={
+                            width
+                        }
                         source={{
                             html: note.content,
                         }}
@@ -134,52 +171,77 @@ export default function NoteDetails() {
                             'JetBrains-Bold',
                         ]}
                         baseStyle={{
-                            color: COLORS.textBright,
+                            color:
+                                theme.textBright,
+
                             fontSize: 16,
+
                             lineHeight: 28,
-                            fontFamily: 'JetBrains-Regular',
+
+                            fontFamily:
+                                'JetBrains-Regular',
                         }}
                         tagsStyles={{
                             body: {
-                                color: COLORS.textBright,
+                                color:
+                                    theme.textBright,
+
                                 fontFamily:
                                     'JetBrains-Regular',
                             },
 
                             p: {
-                                color: COLORS.textBright,
+                                color:
+                                    theme.textBright,
+
                                 fontSize: 16,
+
                                 lineHeight: 28,
+
                                 marginBottom: 12,
+
                                 fontFamily:
                                     'JetBrains-Regular',
                             },
 
                             h1: {
-                                color: COLORS.primary,
+                                color:
+                                    theme.primary,
+
                                 fontSize: 26,
-                                textTransform: "capitalize",
+
+                                textTransform:
+                                    'capitalize',
+
                                 marginBottom: 16,
+
                                 fontFamily:
                                     'JetBrains-Bold',
                             },
 
                             h2: {
-                                color: COLORS.secondary,
+                                color:
+                                    theme.secondary,
+
                                 fontSize: 24,
+
                                 marginBottom: 14,
+
                                 fontFamily:
                                     'JetBrains-Bold',
                             },
 
                             strong: {
-                                color: COLORS.textBright,
+                                color:
+                                    theme.textBright,
+
                                 fontFamily:
                                     'JetBrains-Bold',
                             },
 
                             em: {
-                                fontStyle: 'italic',
+                                fontStyle:
+                                    'italic',
                             },
 
                             ul: {
@@ -191,37 +253,49 @@ export default function NoteDetails() {
                             },
 
                             li: {
-                                color: COLORS.textBright,
+                                color:
+                                    theme.textBright,
+
                                 marginBottom: 8,
+
                                 fontFamily:
                                     'JetBrains-Regular',
                             },
 
                             blockquote: {
                                 borderLeftWidth: 4,
+
                                 borderLeftColor:
-                                    COLORS.primary,
+                                    theme.primary,
 
                                 paddingLeft: 16,
+
                                 opacity: 0.8,
+
                                 marginVertical: 16,
                             },
 
                             code: {
                                 backgroundColor:
-                                    COLORS.surface,
+                                    theme.surface,
 
-                                color: COLORS.warning,
+                                color:
+                                    theme.warning,
 
                                 paddingHorizontal: 8,
+
                                 paddingVertical: 4,
+
                                 borderRadius: 8,
+
                                 fontFamily:
                                     'JetBrains-Regular',
                             },
 
                             a: {
-                                color: COLORS.primary,
+                                color:
+                                    theme.primary,
+
                                 textDecorationLine:
                                     'none',
                             },
@@ -233,71 +307,102 @@ export default function NoteDetails() {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: COLORS.background,
-    },
+const createStyles = (theme: any) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor:
+                theme.background,
+        },
 
-    loaderContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: COLORS.background,
-    },
+        loaderContainer: {
+            flex: 1,
+            justifyContent:
+                'center',
 
-    emptyText: {
-        color: COLORS.textBright,
-        fontSize: 18,
-    },
+            alignItems: 'center',
 
-    header: {
-        paddingHorizontal: 18,
-        paddingVertical: 14,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
-    },
+            backgroundColor:
+                theme.background,
+        },
 
-    iconButton: {
-        width: 42,
-        height: 42,
-        borderRadius: 14,
-        backgroundColor: COLORS.surface,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-    },
+        emptyText: {
+            color: theme.textBright,
+            fontSize: 18,
+        },
 
-    content: {
-        flex: 1,
-        padding: 20,
-    },
+        header: {
+            paddingHorizontal: 18,
+            paddingVertical: 14,
 
-    title: {
-        color: COLORS.textBright,
-        fontSize: 32,
-        lineHeight: 42,
-        fontFamily: 'JetBrains-Bold',
-    },
+            flexDirection: 'row',
 
-    date: {
-        color: COLORS.text,
-        marginTop: 12,
-        marginBottom: 30,
-        fontSize: 13,
-        fontFamily: 'JetBrains-Regular',
-    },
-    htmlContainer: {
-        borderTopColor: COLORS.secondary,
-        borderTopWidth: 2,
-        // backgroundColor: COLORS.surface,
-        // borderRadius: 24,
-        padding: 18,
-        // borderWidth: 1,
-        // borderColor: COLORS.border,
-    },
-})
+            justifyContent:
+                'space-between',
+
+            alignItems: 'center',
+
+            borderBottomWidth: 1,
+
+            borderBottomColor:
+                theme.border,
+        },
+
+        iconButton: {
+            width: 42,
+            height: 42,
+
+            borderRadius: 14,
+
+            backgroundColor:
+                theme.surface,
+
+            justifyContent:
+                'center',
+
+            alignItems: 'center',
+
+            borderWidth: 1,
+
+            borderColor:
+                theme.border,
+        },
+
+        content: {
+            flex: 1,
+            padding: 20,
+        },
+
+        title: {
+            color: theme.textBright,
+
+            fontSize: 32,
+
+            lineHeight: 42,
+
+            fontFamily:
+                'JetBrains-Bold',
+        },
+
+        date: {
+            color: theme.text,
+
+            marginTop: 12,
+
+            marginBottom: 30,
+
+            fontSize: 13,
+
+            fontFamily:
+                'JetBrains-Regular',
+        },
+
+        htmlContainer: {
+            borderTopColor:
+                theme.secondary,
+
+            borderTopWidth: 2,
+
+            padding: 18,
+        },
+    })
